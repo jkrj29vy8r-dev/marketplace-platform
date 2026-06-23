@@ -24,6 +24,7 @@ export interface ServiceRequest {
   description: string;
   budgetMin: number;
   budgetMax: number;
+  imageUrl?: string;
   status: RequestStatus;
   createdAt: string;
 }
@@ -38,6 +39,7 @@ export interface ServiceOffer {
   description: string;
   priceFrom: number;
   rating: number;
+  imageUrl?: string;
   status: OfferStatus;
   createdAt: string;
 }
