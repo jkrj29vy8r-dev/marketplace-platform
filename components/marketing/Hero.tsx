@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 export function Hero() {
@@ -19,8 +20,12 @@ export function Hero() {
         transparent commission.
       </p>
       <div className="mt-10 flex items-center justify-center gap-4">
-        <Button>Start matching</Button>
-        <Button variant="outline">See how it works</Button>
+        <Link href="/dashboard/client">
+          <Button>Start matching</Button>
+        </Link>
+        <Link href="#live-stats">
+          <Button variant="outline">See how it works</Button>
+        </Link>
       </div>
     </section>
   );
