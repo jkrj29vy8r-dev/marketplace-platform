@@ -1,6 +1,14 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
 import { AdminOverview } from "@/components/dashboard/AdminOverview";
+import { RequestsFeed } from "@/components/dashboard/RequestsFeed";
+import { OffersFeed } from "@/components/dashboard/OffersFeed";
+import { UsersPanel } from "@/components/dashboard/UsersPanel";
+import { CommissionSettings } from "@/components/dashboard/CommissionSettings";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import { computeCommission } from "@/server/services/commission";
-import type { Match, PlatformStats } from "@/types/domain";
+import type { Match, PlatformStats, ServiceOffer, ServiceRequest } from "@/types/domain";
 
 const stats: PlatformStats = {
   activeUsers: 12480,
@@ -35,14 +43,67 @@ const matches: Match[] = demoMatches.map(({ gross, status, matchScore }, i) => (
 }));
 
 export default function AdminDashboardPage() {
+  const [requests, setRequests] = useState<ServiceRequest[]>([]);
+  const [offers, setOffers] = useState<ServiceOffer[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    const [requestsRes, offersRes] = await Promise.all([
+      fetch("/api/requests"),
+      fetch("/api/offers"),
+    ]);
+    const { requests } = await requestsRes.json();
+    const { offers } = await offersRes.json();
+    setRequests(requests);
+    setOffers(offers);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
   return (
     <main className="min-h-screen bg-base-950 px-6 py-10 sm:px-10">
-      <h1 className="font-display text-2xl">Operator console</h1>
-      <p className="mt-1 text-sm text-white/50">
-        Live view of matching, transactions and platform take-rate.
-      </p>
-      <div className="mt-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl">Operator console</h1>
+          <p className="mt-1 text-sm text-white/50">
+            Live view of matching, transactions and platform take-rate.
+          </p>
+        </div>
+        <LogoutButton />
+      </div>
+
+      <div className="mt-8 grid gap-6">
         <AdminOverview stats={stats} matches={matches} />
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <CommissionSettings />
+          <UsersPanel />
+        </div>
+
+        <div>
+          <h2 className="font-display text-lg">Moderate requests</h2>
+          <div className="mt-4">
+            {loading ? (
+              <p className="text-sm text-white/40">Loading…</p>
+            ) : (
+              <RequestsFeed requests={requests} offers={offers} onModerated={refresh} />
+            )}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="font-display text-lg">Moderate offers</h2>
+          <div className="mt-4">
+            {loading ? (
+              <p className="text-sm text-white/40">Loading…</p>
+            ) : (
+              <OffersFeed offers={offers} onModerated={refresh} />
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );

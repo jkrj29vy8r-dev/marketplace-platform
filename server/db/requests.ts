@@ -59,3 +59,7 @@ export async function listServiceRequests(limit = 20): Promise<ServiceRequest[]>
   `;
   return rows.map(toServiceRequest);
 }
+
+export async function deleteServiceRequest(id: string): Promise<void> {
+  await sql`DELETE FROM service_requests WHERE id = ${id};`;
+}

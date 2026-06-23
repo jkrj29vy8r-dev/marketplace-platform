@@ -20,7 +20,7 @@ export function Hero() {
         transparent commission.
       </p>
       <div className="mt-10 flex items-center justify-center gap-4">
-        <Link href="/dashboard/client">
+        <Link href="/signup">
           <Button>Start matching</Button>
         </Link>
         <Link href="#live-stats">

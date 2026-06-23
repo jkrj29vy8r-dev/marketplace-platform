@@ -1,14 +1,25 @@
+"use client";
+
 import { GlassCard } from "@/components/ui/GlassCard";
+import { Button } from "@/components/ui/Button";
 import { rankCandidates } from "@/server/services/matching";
 import type { ServiceOffer, ServiceRequest } from "@/types/domain";
 
 export function RequestsFeed({
   requests,
   offers,
+  onModerated,
 }: {
   requests: ServiceRequest[];
   offers: ServiceOffer[];
+  onModerated?: () => void;
 }) {
+  async function remove(request: ServiceRequest) {
+    if (!confirm(`Remove "${request.title}"?`)) return;
+    await fetch(`/api/requests/${request.id}`, { method: "DELETE" });
+    onModerated?.();
+  }
+
   if (requests.length === 0) {
     return (
       <GlassCard className="p-6 text-center text-sm text-white/40">
@@ -39,7 +50,18 @@ export function RequestsFeed({
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-white/50">{request.description}</p>
-                <p className="mt-1 text-xs text-white/30">{request.category} · by {request.clientId}</p>
+                <div className="mt-1 flex items-center justify-between">
+                  <p className="text-xs text-white/30">{request.category} · by {request.clientId}</p>
+                  {onModerated && (
+                    <Button
+                      variant="ghost"
+                      className="px-2 py-0.5 text-xs text-accent-danger"
+                      onClick={() => remove(request)}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
             {candidates.length > 0 && (

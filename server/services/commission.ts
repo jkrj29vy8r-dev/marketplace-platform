@@ -25,12 +25,13 @@ export interface CommissionBreakdown {
 
 // Single source of truth for "how much does the platform keep."
 // Called both when a match is first priced and again at payout time,
-// so the two numbers can never drift apart.
-export function computeCommission(grossAmount: number): CommissionBreakdown {
+// so the two numbers can never drift apart. `overrideRate`, when set by
+// an operator from the admin dashboard, bypasses the tiers entirely.
+export function computeCommission(grossAmount: number, overrideRate?: number | null): CommissionBreakdown {
   if (grossAmount < 0) {
     throw new Error("grossAmount must be non-negative");
   }
-  const commissionRate = resolveCommissionRate(grossAmount);
+  const commissionRate = overrideRate ?? resolveCommissionRate(grossAmount);
   // Round at the cent level only once, at the end, to avoid compounding
   // rounding errors across repeated reads of the same match.
   const commissionAmount = Math.round(grossAmount * commissionRate * 100) / 100;

@@ -57,3 +57,7 @@ export async function listServiceOffers(limit = 20): Promise<ServiceOffer[]> {
   `;
   return rows.map(toServiceOffer);
 }
+
+export async function deleteServiceOffer(id: string): Promise<void> {
+  await sql`DELETE FROM service_offers WHERE id = ${id};`;
+}

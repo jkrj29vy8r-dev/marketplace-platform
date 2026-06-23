@@ -1,7 +1,22 @@
+"use client";
+
 import { GlassCard } from "@/components/ui/GlassCard";
+import { Button } from "@/components/ui/Button";
 import type { ServiceOffer } from "@/types/domain";
 
-export function OffersFeed({ offers }: { offers: ServiceOffer[] }) {
+export function OffersFeed({
+  offers,
+  onModerated,
+}: {
+  offers: ServiceOffer[];
+  onModerated?: () => void;
+}) {
+  async function remove(offer: ServiceOffer) {
+    if (!confirm(`Remove "${offer.title}"?`)) return;
+    await fetch(`/api/offers/${offer.id}`, { method: "DELETE" });
+    onModerated?.();
+  }
+
   if (offers.length === 0) {
     return (
       <GlassCard className="p-6 text-center text-sm text-white/40">
@@ -29,7 +44,18 @@ export function OffersFeed({ offers }: { offers: ServiceOffer[] }) {
               </span>
             </div>
             <p className="mt-1 text-sm text-white/50">{offer.description}</p>
-            <p className="mt-1 text-xs text-white/30">{offer.category} · by {offer.providerId}</p>
+            <div className="mt-1 flex items-center justify-between">
+              <p className="text-xs text-white/30">{offer.category} · by {offer.providerId}</p>
+              {onModerated && (
+                <Button
+                  variant="ghost"
+                  className="px-2 py-0.5 text-xs text-accent-danger"
+                  onClick={() => remove(offer)}
+                >
+                  Remove
+                </Button>
+              )}
+            </div>
           </div>
         </GlassCard>
       ))}

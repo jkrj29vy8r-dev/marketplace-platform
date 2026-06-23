@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { PostForm } from "@/components/dashboard/PostForm";
 import { RequestsFeed } from "@/components/dashboard/RequestsFeed";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 import type { ServiceOffer, ServiceRequest } from "@/types/domain";
 
 export default function ClientDashboardPage() {
@@ -28,10 +29,15 @@ export default function ClientDashboardPage() {
 
   return (
     <main className="min-h-screen bg-base-950 px-6 py-10 sm:px-10">
-      <h1 className="font-display text-2xl">Your demand</h1>
-      <p className="mt-1 text-sm text-white/50">
-        Post what you need, with a photo if it helps, and see who matches.
-      </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl">Your demand</h1>
+          <p className="mt-1 text-sm text-white/50">
+            Post what you need, with a photo if it helps, and see who matches.
+          </p>
+        </div>
+        <LogoutButton />
+      </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
         <PostForm kind="request" onPosted={refresh} />
         {loading ? (

@@ -32,4 +32,32 @@ export async function ensureSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
   `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT 'client',
+      blocked BOOLEAN NOT NULL DEFAULT false,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+  `;
+
+  // Single-row table holding platform-wide settings an operator can tune
+  // from the admin dashboard, e.g. an override for the tiered commission.
+  await sql`
+    CREATE TABLE IF NOT EXISTS platform_settings (
+      id INTEGER PRIMARY KEY DEFAULT 1,
+      commission_override NUMERIC,
+      CONSTRAINT single_row CHECK (id = 1)
+    );
+  `;
+
+  await sql`
+    INSERT INTO platform_settings (id, commission_override)
+    VALUES (1, NULL)
+    ON CONFLICT (id) DO NOTHING;
+  `;
 }
