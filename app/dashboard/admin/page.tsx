@@ -6,6 +6,8 @@ import { RequestsFeed } from "@/components/dashboard/RequestsFeed";
 import { OffersFeed } from "@/components/dashboard/OffersFeed";
 import { UsersPanel } from "@/components/dashboard/UsersPanel";
 import { CommissionSettings } from "@/components/dashboard/CommissionSettings";
+import { VendorApprovals } from "@/components/dashboard/VendorApprovals";
+import { Reports } from "@/components/dashboard/Reports";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { computeCommission } from "@/server/services/commission";
 import type { Match, PlatformStats, ServiceOffer, ServiceRequest } from "@/types/domain";
@@ -78,10 +80,14 @@ export default function AdminDashboardPage() {
       <div className="mt-8 grid gap-6">
         <AdminOverview stats={stats} matches={matches} />
 
+        <Reports />
+
         <div className="grid gap-6 lg:grid-cols-2">
           <CommissionSettings />
           <UsersPanel />
         </div>
+
+        <VendorApprovals />
 
         <div>
           <h2 className="font-display text-lg">Moderate requests</h2>

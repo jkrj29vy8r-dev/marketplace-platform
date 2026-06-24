@@ -32,11 +32,13 @@ export async function middleware(req: NextRequest) {
   const isAdminRoute = pathname.startsWith("/dashboard/admin");
   const isClientRoute = pathname.startsWith("/dashboard/client");
   const isProviderRoute = pathname.startsWith("/dashboard/provider");
+  const isVendorRoute = pathname.startsWith("/dashboard/vendor");
 
   const allowed =
     (isAdminRoute && role === "admin") ||
     (isClientRoute && (role === "client" || role === "admin")) ||
-    (isProviderRoute && (role === "provider" || role === "admin"));
+    (isProviderRoute && (role === "provider" || role === "admin")) ||
+    (isVendorRoute && (role === "vendor" || role === "admin"));
 
   if (!allowed) {
     return NextResponse.redirect(new URL("/", req.url));
